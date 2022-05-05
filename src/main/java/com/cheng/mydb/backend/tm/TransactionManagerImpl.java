@@ -14,6 +14,10 @@ import java.nio.channels.FileChannel;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * TM用来维护一个 XID 格式的文件
+ * 前8个字节为头，记录这个 XID 文件管理的事务的个数，每个事务状态占1字节
+ */
 public class TransactionManagerImpl implements TransactionManager {
     // XID文件头长度
     static final int XID_HEADER_LENGTH=8;
@@ -33,6 +37,7 @@ public class TransactionManagerImpl implements TransactionManager {
     private long xidCounter;
     private Lock lock;
 
+    // 创建一个 XID 文件并创建 TM
     public static TransactionManagerImpl create(String path){
         File file=new File(path+XID_SUFFIX);
         try {
@@ -45,7 +50,6 @@ public class TransactionManagerImpl implements TransactionManager {
         if (!file.canRead() || !file.canWrite()){
             Panic.panic(Error.FileCannotRWException);
         }
-
 
         RandomAccessFile raf=null;
         FileChannel fc=null;
@@ -66,6 +70,7 @@ public class TransactionManagerImpl implements TransactionManager {
         return new TransactionManagerImpl(raf,fc);
     }
 
+    // 从一个已有的 XID 文件来创建 TM
     public static TransactionManagerImpl open(String path){
         File file=new File(path+XID_SUFFIX);
         if (!file.exists()){
@@ -95,6 +100,7 @@ public class TransactionManagerImpl implements TransactionManager {
         checkXIDCounter();
     }
 
+    // 检验XID文件中事务数量是否正常
     private void checkXIDCounter(){
         long fileLen=0;
         try {
@@ -122,6 +128,7 @@ public class TransactionManagerImpl implements TransactionManager {
         }
     }
 
+    //　根据事务ID获取其在XID文件中的偏移量
     private long getXidPosition(long xid){
         // 0-7字节为头部，xid=1从第8字节开始（xid=0不计算在内）
         return XID_HEADER_LENGTH+(xid-1)*XID_FIELD_SIZE;
@@ -139,6 +146,7 @@ public class TransactionManagerImpl implements TransactionManager {
         }
     }
 
+    // 更新XID文件中事务状态
     private void updateXID(long xid, byte status) {
         long offset=getXidPosition(xid);
         byte[] temp=new byte[XID_FIELD_SIZE];
@@ -158,6 +166,7 @@ public class TransactionManagerImpl implements TransactionManager {
         }
     }
 
+    // 事务计数加1，同时修改XID文件的头
     private void incXIDCounter() {
         xidCounter++;
         ByteBuffer buf=ByteBuffer.wrap(Parser.long2Bytes(xidCounter));
