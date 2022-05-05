@@ -123,6 +123,7 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     private long getXidPosition(long xid){
+        // 0-7字节为头部，xid=1从第8字节开始（xid=0不计算在内）
         return XID_HEADER_LENGTH+(xid-1)*XID_FIELD_SIZE;
     }
 
