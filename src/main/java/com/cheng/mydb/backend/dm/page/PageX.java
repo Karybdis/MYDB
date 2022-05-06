@@ -9,7 +9,7 @@ import java.util.Arrays;
  * PageX管理普通页
  * 普通页结构
  * [FreeSpaceOffset] [Data]
- * FreeSpaceOffset: 2字节 空闲位置开始偏移
+ * FreeSpaceOffset: 2字节 空闲位置开始的偏移量
  */
 public class PageX {
     private static final byte OFFSET_FREE=0;

@@ -11,10 +11,10 @@ public interface Logger {
 
     public static final String LOG_SUFFIX=".log";
 
-    void log(byte[] data);
-    void truncate(long x) throws Exception;
-    byte[] next();
-    void rewind();
+    void log(byte[] data);                      // 生成log并写入日志文件
+    void truncate(long x) throws Exception;     // 在指定位置截断文件
+    byte[] next();                              // 获取下一个log的data
+    void rewind();                              // 指针重新指向第一个log的位置
     void close();
 
 //    public static Logger create(String path) {

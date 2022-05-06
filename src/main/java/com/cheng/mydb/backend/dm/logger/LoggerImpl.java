@@ -13,7 +13,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 日志文件读写
+ * 管理日志文件读写
  *
  * 日志文件标准格式为：
  * [XCheckSum] [Log1] [Log2] ... [LogN] [BadTail]
@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * [Size] [CheckSum] [Data]
  * Size 4字节int 标识此Log中Data长度
  * CheckSum 4字节int
+ * Data: [LogType] [XID] [UID] [OldRaw] [NewRaw](Update) 或者 [LogType] [XID] [Pgno] [Offset] [Raw](Insert)
  */
 public class LoggerImpl implements Logger {
 
@@ -155,7 +156,7 @@ public class LoggerImpl implements Logger {
         return log;
     }
 
-    // 生成log并写入日志
+    // 生成log并写入日志文件
     public void log(byte[] data) {
         byte[] log=wraplog(data);
         ByteBuffer buf=ByteBuffer.wrap(log);
