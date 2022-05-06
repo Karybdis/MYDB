@@ -16,7 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
     private static final int MEM_MIN_LIM = 10;
-    public static final String DB_SUFFIX = ".db";
 
     private Lock lock;
     private RandomAccessFile file;
@@ -24,7 +23,7 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
 
     private AtomicInteger pageNumbers;
 
-    public PageCacheImpl(RandomAccessFile file,FileChannel fc,int maxResources) {
+    PageCacheImpl(RandomAccessFile file,FileChannel fc,int maxResources) {
         super(maxResources);
         if(maxResources < MEM_MIN_LIM) {
             Panic.panic(Error.MemTooSmallException);
@@ -40,6 +39,8 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
         this.fc=fc;
         pageNumbers=new AtomicInteger();
     }
+
+
 
     // 当资源不在缓存时，从数据源获取
     @Override
@@ -120,7 +121,7 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
     }
 
     public void truncateByBgno(int maxPgno) {
-
+        // TODO
     }
 
     public int getPageNumber() {

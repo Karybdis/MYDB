@@ -20,15 +20,15 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class TransactionManagerImpl implements TransactionManager {
     // XID文件头长度
-    static final int XID_HEADER_LENGTH=8;
+    static final byte XID_HEADER_LENGTH=8;
     // 每个事务的占用长度
-    private static final int XID_FIELD_SIZE=1;
+    private static final byte XID_FIELD_SIZE=1;
     // 事务的三种状态
     private static final byte FIELD_TRAN_ACTIVE=0;
     private static final byte FIELD_TRAN_COMMITED=1;
     private static final byte FIELD_TRAN_ABORTED=2;
     // 超级事务，永远为commited状态
-    public static final long SUPER_XID = 0;
+    public static final byte SUPER_XID = 0;
     // XID 文件后缀
     static final String XID_SUFFIX = ".xid";
 

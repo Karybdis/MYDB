@@ -1,5 +1,8 @@
 package com.cheng.mydb.backend.common;
 
+import com.cheng.mydb.backend.dm.pageCache.PageCache;
+import com.cheng.mydb.backend.dm.pageCache.PageCacheImpl;
+
 public class SubArray {
     public byte[] raw;
     public int start;
