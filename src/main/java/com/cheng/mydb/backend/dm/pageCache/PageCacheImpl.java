@@ -14,6 +14,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * 管理页面缓存和当页面不在缓存时，从文件获取
+ */
 public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
     private static final int MEM_MIN_LIM = 10;
 
@@ -120,7 +123,7 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
         release(page.getPageNumber());
     }
 
-    public void truncateByBgno(int maxPgno) {
+    public void truncateByPgno(int maxPgno) {
         // TODO
     }
 

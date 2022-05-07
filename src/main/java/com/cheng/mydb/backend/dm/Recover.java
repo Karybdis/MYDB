@@ -7,7 +7,6 @@ import com.cheng.mydb.backend.dm.pageCache.PageCache;
 import com.cheng.mydb.backend.tm.TransactionManager;
 import com.cheng.mydb.backend.utils.Panic;
 import com.cheng.mydb.backend.utils.Parser;
-import sun.jvm.hotspot.runtime.Bytes;
 
 import java.util.*;
 
@@ -58,7 +57,7 @@ public class Recover {
         if(maxPgno == 0) {
             maxPgno = 1;
         }
-        pc.truncateByBgno(maxPgno);
+        pc.truncateByPgno(maxPgno);
         System.out.println("Truncate to " + maxPgno + " pages.");
 
         redoTranscations(tm, lg, pc);
@@ -70,7 +69,7 @@ public class Recover {
         System.out.println("Recovery Over.");
     }
 
-    // 执行redo
+    // 执行redo，查找日志文件，顺序对所有已完成（committed 或 aborted）的插入和更新事务重做
     private static void redoTranscations(TransactionManager tm, Logger lg, PageCache pc) {
         lg.rewind();
         while(true) {
@@ -92,7 +91,7 @@ public class Recover {
         }
     }
 
-    // 执行undo
+    // 执行undo，查找日志文件，逆序对所有未完成（active）的插入和更新事务撤销
     private static void undoTranscations(TransactionManager tm, Logger lg, PageCache pc) {
         Map<Long, List<byte[]>> logCache = new HashMap<>();
         lg.rewind();
@@ -160,6 +159,7 @@ public class Recover {
         return li;
     }
 
+    // redo或者undo一个更新事务
     private static void doUpdateLog(PageCache pc, byte[] log, int flag) {
         int pgno;
         short offset;
@@ -203,6 +203,7 @@ public class Recover {
         return li;
     }
 
+    // redo或者undo一个插入事务
     private static void doInsertLog(PageCache pc, byte[] log, int flag) {
         InsertLogInfo li = parseInsertLog(log);
         Page pg = null;

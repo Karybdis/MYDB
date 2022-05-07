@@ -6,7 +6,7 @@ import com.cheng.mydb.backend.utils.RandomUtil;
 import java.util.Arrays;
 
 /**
- * PageOne特殊管理第一页
+ * PageOne特殊管理第一页的工具类
  * ValidCheck
  * db启动时给100~107字节处填入一个随机字节，db关闭时将其拷贝到108~115字节
  * 用于判断上一次数据库是否正常关闭

@@ -17,7 +17,7 @@ public interface PageCache {
     Page getPage(int pgno) throws Exception;    // 根据页码获取页
     void close();                               // 关闭页面缓存
     void release(Page page);                    // 释放该页
-    void truncateByBgno(int maxPgno);
+    void truncateByPgno(int maxPgno);
     int getPageNumber();                        // 获取页码
     void flushPage(Page page);                  // 把该页刷回数据源
 

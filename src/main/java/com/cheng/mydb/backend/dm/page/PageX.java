@@ -6,7 +6,7 @@ import com.cheng.mydb.backend.utils.Parser;
 import java.util.Arrays;
 
 /**
- * PageX管理普通页
+ * PageX管理普通页的工具类
  * 普通页结构
  * [FreeSpaceOffset] [Data]
  * FreeSpaceOffset: 2字节 空闲位置开始的偏移量
