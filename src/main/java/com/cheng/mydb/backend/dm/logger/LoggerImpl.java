@@ -3,6 +3,7 @@ package com.cheng.mydb.backend.dm.logger;
 import com.cheng.mydb.backend.utils.Panic;
 import com.cheng.mydb.backend.utils.Parser;
 import com.cheng.mydb.common.Error;
+import com.google.common.primitives.Bytes;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -191,10 +192,7 @@ public class LoggerImpl implements Logger {
     private byte[] wraplog(byte[] data) {
         byte[] size=Parser.int2Bytes(data.length);
         byte[] CheckSum=Parser.int2Bytes(calCheckSum(0,data));
-        byte[] log=new byte[CheckSum.length+size.length+data.length];
-        System.arraycopy(size,0,log,0,size.length);
-        System.arraycopy(CheckSum,0,log,size.length,CheckSum.length);
-        System.arraycopy(data,0,log,size.length+CheckSum.length,data.length);
+        byte[] log=Bytes.concat(size,CheckSum,data);
         return log;
     }
 

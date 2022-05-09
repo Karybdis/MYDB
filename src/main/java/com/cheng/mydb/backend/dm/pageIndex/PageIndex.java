@@ -32,6 +32,7 @@ public class PageIndex {
         }
     }
 
+    // 返回一个空间足够的page
     public PageInfo select(int spaceSize){
         lock.lock();
         try {
@@ -49,6 +50,4 @@ public class PageIndex {
             lock.unlock();
         }
     }
-
-
 }

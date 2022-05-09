@@ -19,10 +19,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * DataSize  2字节，标识Data的长度
  */
 public class DataItemImpl implements DataItem {
-    static final byte OFFSET_VALID=0;
-    static final byte OFFSET_SIZE=1;
-    static final byte OFFSET_DATA=3;
-
     private SubArray raw;
     private byte[] oldRaw;
     private Lock rlock;
@@ -31,7 +27,7 @@ public class DataItemImpl implements DataItem {
     private long uid;
     private Page page;
 
-    public DataItemImpl(SubArray raw, byte[] oldRaw, DataManagerImpl dm, long uid, Page page) {
+    public DataItemImpl(SubArray raw, byte[] oldRaw, Page page,long uid,DataManagerImpl dm) {
         this.raw = raw;
         this.oldRaw = oldRaw;
         this.dm = dm;
@@ -50,12 +46,20 @@ public class DataItemImpl implements DataItem {
         return new SubArray(raw.raw,raw.start+OFFSET_DATA,raw.end);
     }
 
+    /**
+     * 在上层模块试图对 DataItem 进行修改时，需要遵循一定的流程：在修改之前需要调用 before() 方法，想要撤销修改时，
+     * 调用 unBefore() 方法，在修改完成后，调用 after() 方法。整个流程，主要是为了保存前相数据，并及时落日志。
+     * DM 会保证对 DataItem 的修改是原子性的。
+     */
     public void before() {
-
+        wlock.lock();
+        page.setDirty(true);
+        System.arraycopy(raw.raw,raw.start,oldRaw,0,oldRaw.length);
     }
 
     public void unBefore() {
-
+        System.arraycopy(oldRaw,0,raw.raw,raw.start,oldRaw.length);
+        wlock.unlock();
     }
 
     public void after(long xid) {
@@ -83,18 +87,18 @@ public class DataItemImpl implements DataItem {
     }
 
     public Page page() {
-        return null;
+        return this.page;
     }
 
     public long getUid() {
-        return 0;
+        return this.uid;
     }
 
     public byte[] getOldRaw() {
-        return new byte[0];
+        return this.oldRaw;
     }
 
     public SubArray getRaw() {
-        return null;
+        return this.raw;
     }
 }

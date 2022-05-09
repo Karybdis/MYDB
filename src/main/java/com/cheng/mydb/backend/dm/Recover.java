@@ -1,5 +1,7 @@
 package com.cheng.mydb.backend.dm;
 
+import com.cheng.mydb.backend.common.SubArray;
+import com.cheng.mydb.backend.dm.dataItem.DataItem;
 import com.cheng.mydb.backend.dm.logger.Logger;
 import com.cheng.mydb.backend.dm.page.Page;
 import com.cheng.mydb.backend.dm.page.PageX;
@@ -7,6 +9,7 @@ import com.cheng.mydb.backend.dm.pageCache.PageCache;
 import com.cheng.mydb.backend.tm.TransactionManager;
 import com.cheng.mydb.backend.utils.Panic;
 import com.cheng.mydb.backend.utils.Parser;
+import com.google.common.primitives.Bytes;
 
 import java.util.*;
 
@@ -144,6 +147,16 @@ public class Recover {
     private static final int OFFSET_UPDATE_UID = OFFSET_XID+8;          // 9-16字节   UID
     private static final int OFFSET_UPDATE_RAW = OFFSET_UPDATE_UID+8;   // 17字节开始  RAW
 
+    public static byte[] updateLog(long xid, DataItem di) {
+        byte[] logType = {LOG_TYPE_UPDATE};
+        byte[] xidRaw = Parser.long2Bytes(xid);
+        byte[] uidRaw = Parser.long2Bytes(di.getUid());
+        byte[] oldRaw = di.getOldRaw();
+        SubArray raw = di.getRaw();
+        byte[] newRaw = Arrays.copyOfRange(raw.raw, raw.start, raw.end);
+        return Bytes.concat(logType, xidRaw, uidRaw, oldRaw, newRaw);
+    }
+
     // 依据log生成UpdateLogInfo对象
     private static UpdateLogInfo parseUpdateLog(byte[] log){
         UpdateLogInfo li=new UpdateLogInfo();
@@ -192,6 +205,14 @@ public class Recover {
     private static final int OFFSET_INSERT_PGNO = OFFSET_XID+8;             // 9-12字节   PGNO
     private static final int OFFSET_INSERT_OFFSET = OFFSET_INSERT_PGNO+4;   // 13-14字节  OFFSET
     private static final int OFFSET_INSERT_RAW = OFFSET_INSERT_OFFSET+2;    // 15字节开始　RAW
+
+    public static byte[] insertLog(long xid, Page page, byte[] raw) {
+        byte[] logTypeRaw = {LOG_TYPE_INSERT};
+        byte[] xidRaw = Parser.long2Bytes(xid);
+        byte[] pgnoRaw = Parser.int2Bytes(page.getPageNumber());
+        byte[] offsetRaw = Parser.short2Bytes(PageX.getFSO(page));
+        return Bytes.concat(logTypeRaw, xidRaw, pgnoRaw, offsetRaw, raw);
+    }
 
     // 依据log生成InsertLogInfo对象
     private static InsertLogInfo parseInsertLog(byte[] log) {

@@ -24,7 +24,7 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
     private RandomAccessFile file;
     private FileChannel fc;
 
-    private AtomicInteger pageNumbers;
+    private AtomicInteger pageNumbers;  // 总页数
 
     PageCacheImpl(RandomAccessFile file,FileChannel fc,int maxResources) {
         super(maxResources);
