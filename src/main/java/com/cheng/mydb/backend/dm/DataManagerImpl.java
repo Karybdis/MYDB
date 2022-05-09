@@ -36,7 +36,7 @@ public class DataManagerImpl extends AbstractCache<DataItem> implements DataMana
     // read() 根据 UID 从缓存中获取 DataItem，并校验有效位：
     @Override
     public DataItem read(long uid) throws Exception {
-        DataItemImpl di =(DataItemImpl) super.get(uid);
+        DataItem di = super.get(uid);
         if (!di.isValid()){
             di.release();
             return null;
@@ -109,7 +109,7 @@ public class DataManagerImpl extends AbstractCache<DataItem> implements DataMana
 
     @Override
     protected void releaseForCache(DataItem dataItem) {
-        dataItem.page().release();
+        dataItem.getPage().release();
     }
 
     // 在创建文件时初始化PageOne

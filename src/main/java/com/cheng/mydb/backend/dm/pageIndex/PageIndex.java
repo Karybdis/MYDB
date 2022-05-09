@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+// 页面索引
 public class PageIndex {
     private static final byte INTERVALS_NO=40;                              // 一页分成40个区间
     private static final int THRESHOLD= PageCache.PAGE_SIZE/INTERVALS_NO;   // 每个区间大小

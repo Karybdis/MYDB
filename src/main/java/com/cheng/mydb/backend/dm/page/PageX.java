@@ -10,6 +10,7 @@ import java.util.Arrays;
  * 普通页结构
  * [FreeSpaceOffset] [Data]
  * FreeSpaceOffset: 2字节 空闲位置开始的偏移量
+ * Data 其实就是一个个的DataItem
  */
 public class PageX {
     private static final byte OFFSET_FREE=0;
@@ -37,7 +38,7 @@ public class PageX {
         return Parser.parseShort(Arrays.copyOfRange(raw,0,2));
     }
 
-    // 将raw插入pg中，返回插入位置
+    // 将raw插入page中，返回插入位置
     public static short insert(Page page,byte[] raw){
         page.setDirty(true);
         short FSO = getFSO(page.getData());

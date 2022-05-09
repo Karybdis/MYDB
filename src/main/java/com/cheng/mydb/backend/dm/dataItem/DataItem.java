@@ -16,6 +16,7 @@ public interface DataItem {
     byte OFFSET_SIZE=1;
     byte OFFSET_DATA=3;
 
+    public boolean isValid();
     SubArray data();
 
     void before();
@@ -28,7 +29,7 @@ public interface DataItem {
     void rLock();
     void rUnLock();
 
-    Page page();
+    Page getPage();
     long getUid();
     byte[] getOldRaw();
     SubArray getRaw();

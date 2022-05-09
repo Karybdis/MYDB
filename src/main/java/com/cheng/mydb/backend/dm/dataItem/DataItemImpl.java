@@ -13,19 +13,19 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * DataItem 是 DM 层向上层提供的数据抽象。上层模块通过地址，向 DM 请求到对应的 DataItem，再获取到其中的数据。
- * dataItem 结构如下：
+ * dataItem中raw 结构如下：
  * [ValidFlag] [DataSize] [Data]
  * ValidFlag 1字节，0为合法，1为非法
  * DataSize  2字节，标识Data的长度
  */
 public class DataItemImpl implements DataItem {
-    private SubArray raw;
+    private SubArray raw;           // 数据部分
     private byte[] oldRaw;
     private Lock rlock;
     private Lock wlock;
     private DataManagerImpl dm;
-    private long uid;
-    private Page page;
+    private long uid;               // dataitem的标识id，高32位表示所在页面的页码，低32位表示在页面中的偏移量
+    private Page page;              // 所在页面
 
     public DataItemImpl(SubArray raw, byte[] oldRaw, Page page,long uid,DataManagerImpl dm) {
         this.raw = raw;
@@ -87,7 +87,7 @@ public class DataItemImpl implements DataItem {
         rlock.unlock();
     }
 
-    public Page page() {
+    public Page getPage() {
         return this.page;
     }
 
