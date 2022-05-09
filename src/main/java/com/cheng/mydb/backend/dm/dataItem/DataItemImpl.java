@@ -63,27 +63,28 @@ public class DataItemImpl implements DataItem {
     }
 
     public void after(long xid) {
-
+        dm.logDataItem(xid,this);
+        wlock.unlock();
     }
 
     public void release() {
-
+        dm.releaseDataItem(this);
     }
 
     public void lock() {
-
+        wlock.lock();
     }
 
     public void unlock() {
-
+        wlock.unlock();
     }
 
     public void rLock() {
-
+        rlock.lock();
     }
 
     public void rUnLock() {
-
+        rlock.unlock();
     }
 
     public Page page() {

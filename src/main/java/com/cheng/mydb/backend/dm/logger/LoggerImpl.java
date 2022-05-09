@@ -55,6 +55,7 @@ public class LoggerImpl implements Logger {
         lock = new ReentrantLock();
     }
 
+    // 在打开一个已存在log文件时候执行
     void init(){
         long size=0;
         try {
@@ -69,7 +70,7 @@ public class LoggerImpl implements Logger {
         ByteBuffer raw=ByteBuffer.allocate(4);
         try {
             fc.position(0);
-            fc.write(raw);
+            fc.read(raw);
         } catch (IOException e) {
             Panic.panic(e);
         }

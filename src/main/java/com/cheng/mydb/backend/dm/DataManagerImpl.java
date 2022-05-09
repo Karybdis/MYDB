@@ -148,4 +148,14 @@ public class DataManagerImpl extends AbstractCache<DataItem> implements DataMana
             pg.release();
         }
     }
+
+    public void releaseDataItem(DataItem dataItem){
+        super.release(dataItem.getUid());
+    }
+
+    // 为xid生成update日志
+    public void logDataItem(long xid,DataItem dataItem){
+        byte[] log=Recover.updateLog(xid,dataItem);
+        logger.log(log);
+    }
 }

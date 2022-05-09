@@ -15,6 +15,7 @@ public class PageOne {
     private static final int OFFSET_VC=100; // VC偏移量
     private static final int LEN_VC=8;      // VC长8字节
 
+    // 返回一个初始化的第一页数据
     public static byte[] initRaw(){
         byte[] raw=new byte[PageCache.PAGE_SIZE];
         setVcOpen(raw);

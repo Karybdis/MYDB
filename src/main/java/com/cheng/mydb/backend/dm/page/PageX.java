@@ -16,6 +16,7 @@ public class PageX {
     private static final byte OFFSET_DATA=2;
     public static final int MAX_FREE_SPACE= PageCache.PAGE_SIZE-OFFSET_DATA;
 
+    // 返回一个初始化的普通页数据
     public static byte[] initRaw(){
         byte[] raw=new byte[PageCache.PAGE_SIZE];
         setFSO(raw,OFFSET_DATA);
@@ -23,8 +24,8 @@ public class PageX {
     }
 
     // 页数据的前两个字节写入新的FSO
-    private static void setFSO(byte[] raw, short offsetData) {
-        System.arraycopy(Parser.short2Bytes(offsetData),0,raw,OFFSET_FREE,OFFSET_DATA);
+    private static void setFSO(byte[] raw, short FSO) {
+        System.arraycopy(Parser.short2Bytes(FSO),0,raw,OFFSET_FREE,OFFSET_DATA);
     }
 
     // 获取page的FSO
@@ -39,10 +40,10 @@ public class PageX {
     // 将raw插入pg中，返回插入位置
     public static short insert(Page page,byte[] raw){
         page.setDirty(true);
-        short offset = getFSO(page.getData());
-        System.arraycopy(raw,0,page.getData(),offset,raw.length);
-        setFSO(page.getData(), (short) (offset+raw.length));
-        return offset;
+        short FSO = getFSO(page.getData());
+        System.arraycopy(raw,0,page.getData(),FSO,raw.length);
+        setFSO(page.getData(), (short) (FSO+raw.length));
+        return FSO;
     }
 
     // 获取页面的空闲空间大小

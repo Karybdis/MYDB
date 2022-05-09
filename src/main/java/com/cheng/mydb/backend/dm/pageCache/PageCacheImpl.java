@@ -15,7 +15,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 管理页面缓存和当页面不在缓存时，从文件获取
+ * PageCacheImpl：数据页的缓存具体实现类，除了重写获取 和释放两个方法外，还完成了所有数据页的统一管理：
+ *     1）获取数据库中的数据页总数；getPageNumber()
+ *     2）新建一个数据页并写入数据库文件；newPage(byte[] initData)
+ *     3）从缓存中获取指定的数据页；getPage(int pgno)
+ *     4）删除指定位置后面的数据页；truncateByBgno(int maxPgno)
  */
 public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
     private static final int MEM_MIN_LIM = 10;
