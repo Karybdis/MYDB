@@ -9,6 +9,11 @@ public class Visibility {
         else return tm.isCommitted(xmax) && (xmax>t.xid || t.isInSnapshot(xmax));
     }
 
+    public static boolean isVisible(TransactionManager tm,Transaction t,Entry e){
+        if (t.level==0) return readCommitted(tm,t,e);
+        else return repeatableCommitted(tm,t,e);
+    }
+
     // 读已提交等级下判断是否可见
     private static boolean readCommitted(TransactionManager tm,Transaction t,Entry e) {
         long xid = t.xid;

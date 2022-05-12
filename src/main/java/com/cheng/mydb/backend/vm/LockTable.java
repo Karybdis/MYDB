@@ -23,6 +23,8 @@ public class LockTable {
         lock = new ReentrantLock();
     }
 
+    // 不需要等待则返回null，否则返回锁对象
+    // 会造成死锁则抛出异常
     public Lock add(long xid,long uid) throws Exception {
         lock.lock();
         try {
@@ -46,6 +48,46 @@ public class LockTable {
         } finally {
             lock.unlock();
         }
+    }
+
+
+    // 在一个事务 commit 或者 abort 时，就可以释放所有它持有的锁，并将自身从等待图中删除。
+    public void remove(long xid){
+        lock.lock();
+        try{
+            List<Long> list=x2u.get(xid);
+            if (list!=null){
+                while(list.size()==0){
+                    long uid=list.remove(0);
+                    selectNewXID(uid);
+                }
+            }
+            waitU.remove(xid);
+            x2u.remove(xid);
+            waitLock.remove(xid);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    // 从等待队列中选择一个xid来占用uid
+    private void selectNewXID(long uid) {
+        u2x.remove(uid);
+        List<Long> list=wait.get(uid);
+        assert list.size()>0;
+        while(list.size()>0){
+            long xid=list.remove(0);
+            if (!waitLock.containsKey(xid)) continue;
+            else{
+                putIntoList(x2u,xid,uid);
+                u2x.put(uid,xid);
+                waitU.remove(xid);
+                Lock l=waitLock.get(xid);
+                l.unlock();
+                break;
+            }
+        }
+        if (list.size()==0) wait.remove(uid);
     }
 
 

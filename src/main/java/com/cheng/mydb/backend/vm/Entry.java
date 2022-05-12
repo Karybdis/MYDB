@@ -43,6 +43,10 @@ public class Entry {
         return Bytes.concat(XMIN,XMAX,data);
     }
 
+    public void release(){
+        ((VersionManagerImpl) vm).releaseForEntry(this);
+    }
+
     public void remove(){
         dataItem.release();
     }
