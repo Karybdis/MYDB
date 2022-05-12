@@ -12,6 +12,7 @@ import java.util.Arrays;
  * entry结构：
  * [XMIN] [XMAX] [data]
  * XMIN 是创建该条记录（版本）的事务编号，而 XMAX 则是删除该条记录（版本）的事务编号。
+ * XMIN 应当在版本创建时填写，而 XMAX 则在版本被删除，或者有新版本出现时填写。
  * DATA 就是这条记录持有的数据
  */
 public class Entry {

@@ -3,6 +3,13 @@ package com.cheng.mydb.backend.vm;
 import com.cheng.mydb.backend.tm.TransactionManager;
 
 public class Visibility {
+    public static boolean isVersionSkip(TransactionManager tm,Transaction t,Entry e){
+        long xmax=e.getXMAX();
+        if (t.level==0) return false;
+        else return tm.isCommitted(xmax) && (xmax>t.xid || t.isInSnapshot(xmax));
+    }
+
+    // 读已提交等级下判断是否可见
     private static boolean readCommitted(TransactionManager tm,Transaction t,Entry e) {
         long xid = t.xid;
         long xmin = e.getXMIN();
@@ -16,6 +23,7 @@ public class Visibility {
         return false;
     }
 
+    // 可重复读等级下判断是否可见
     private static boolean repeatableCommitted(TransactionManager tm,Transaction t,Entry e) {
         long xid = t.xid;
         long xmin = e.getXMIN();
