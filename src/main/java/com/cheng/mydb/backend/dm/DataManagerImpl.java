@@ -15,6 +15,7 @@ import com.cheng.mydb.backend.utils.Panic;
 import com.cheng.mydb.backend.utils.Types;
 import com.cheng.mydb.common.Error;
 
+// DataManager 是 DM 层直接对外提供方法的类，同时，也实现成 DataItem 对象的缓存。
 public class DataManagerImpl extends AbstractCache<DataItem> implements DataManager {
 
     TransactionManager tm;
@@ -44,6 +45,9 @@ public class DataManagerImpl extends AbstractCache<DataItem> implements DataMana
         return di;
     }
 
+
+    // insert() 方法，在 pageIndex 中获取一个足以存储插入内容的页面的页号，获取页面后，首先需要写入插入日志，
+    // 接着才可以通过 pageX 插入数据，并返回插入位置的偏移。最后需要将页面信息重新插入 pageIndex。
     @Override
     public long insert(long xid, byte[] data) throws Exception {
         byte[] raw= DataItem.wrapDataItemRaw(data);
@@ -98,6 +102,7 @@ public class DataManagerImpl extends AbstractCache<DataItem> implements DataMana
         pc.close();
     }
 
+    // 缓存中不存在，就去page中直接获取
     @Override
     protected DataItem getForCache(long uid) throws Exception {
         short offset=(short)(uid & ((1L<<16)-1));

@@ -61,7 +61,7 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
             throw t.err;
         }
         byte[] raw = Entry.wrapEntryRaw(xid, data);
-        return dm.insert(xid,data);
+        return dm.insert(xid,raw);
     }
 
 
