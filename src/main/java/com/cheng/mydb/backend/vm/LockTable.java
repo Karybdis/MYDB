@@ -57,7 +57,7 @@ public class LockTable {
         try{
             List<Long> list=x2u.get(xid);
             if (list!=null){
-                while(list.size()==0){
+                while(list.size()>0){
                     long uid=list.remove(0);
                     selectNewXID(uid);
                 }

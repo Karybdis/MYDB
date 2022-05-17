@@ -105,7 +105,7 @@ public class Node {
         return raw.raw;
     }
 
-    // 叶子节点
+    // 空的根节点
     static byte[] newNilRootRaw()  {
         SubArray raw = new SubArray(new byte[NODE_SIZE], 0, NODE_SIZE);
 
