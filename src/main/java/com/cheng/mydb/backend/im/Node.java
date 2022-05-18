@@ -13,9 +13,9 @@ import java.util.List;
  * Node结构如下：
  * [LeafFlag][KeyNumber][SiblingUid]
  * [Son0][Key0][Son1][Key1]...[SonN][KeyN]
- * son与key均为8字节
  * 其中 LeafFlag 标记了该节点是否是个叶子节点；KeyNumber 为该节点中 key 的个数；SiblingUid 是其兄弟节点存储在 DM 中的 UID。
  * 后续是穿插的子节点（SonN）和 KeyN。最后的一个 KeyN 始终为 MAX_VALUE，以此方便查找。
+ * son与key均为8字节，son相当于指针，如果该节点为叶子节点，son为数据的uid，否则son为儿子节点的uid; key为递增的键
  */
 public class Node {
     static final byte IS_LEAF_OFFSET = 0;
@@ -116,6 +116,7 @@ public class Node {
         return raw.raw;
     }
 
+    // 根据uid加载一个node
     static Node loadNode(BPlusTree bTree, long uid) throws Exception {
         DataItem di = bTree.dm.read(uid);
         assert di != null;

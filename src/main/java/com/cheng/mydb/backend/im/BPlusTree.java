@@ -16,15 +16,19 @@ public class BPlusTree {
     DataManager dm;
     long bootUid;
     // 由于B+树在插入删除时，会动态调整，根节点不是固定节点，于是设置一个bootDataItem，该DataItem中存储了根节点的UID。
-    DataItem bootDataItem;
+    DataItem bootDataItem;  // 我算是搞懂了，这个bootDataItem.data()存的就是rootUid
     Lock bootLock;
 
+    // 生成空的根节点rawRoot，交给dm插入，同时插入返回的rootUid，最后返回bootUid
+    // 这个bootUid标识了rootUid所在位置,rootUid标识了rawRoot所在位置
     public static long create(DataManager dm) throws Exception {
         byte[] rawRoot = Node.newNilRootRaw();
         long rootUid = dm.insert(TransactionManagerImpl.SUPER_XID, rawRoot);
         return dm.insert(TransactionManagerImpl.SUPER_XID, Parser.long2Bytes(rootUid));
     }
 
+
+    // 根据bootUid加载一颗B+树
     public static BPlusTree load(long bootUid, DataManager dm) throws Exception {
         DataItem bootDataItem = dm.read(bootUid);
         assert bootDataItem != null;
@@ -36,6 +40,7 @@ public class BPlusTree {
         return t;
     }
 
+    // bootDataItem.data()存的就是rootUid
     private long rootUid() {
         bootLock.lock();
         try {
@@ -73,6 +78,7 @@ public class BPlusTree {
         }
     }
 
+    // 调用Node中的searchNext, 寻找对应 key 的 UID, 如果找不到, 则返回兄弟节点的 UID。
     private long searchNext(long nodeUid, long key) throws Exception {
         while(true) {
             Node node = Node.loadNode(this, nodeUid);
@@ -87,6 +93,7 @@ public class BPlusTree {
         return searchRange(key, key);
     }
 
+    // 范围查找
     public List<Long> searchRange(long leftKey, long rightKey) throws Exception {
         long rootUid = rootUid();
         long leafUid = searchLeaf(rootUid, leftKey);
